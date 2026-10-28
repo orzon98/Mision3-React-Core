@@ -1,22 +1,55 @@
 import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+import { useRef} from 'react'
+import {useEffect} from 'react'
+import { obtenerComida } from "./api";
+import { separarIngredientes, combinarResultados } from "./logic";
 import './App.css'
 
 import SearchForm from "./componentes/SearchForm"
 import RecipeList from "./componentes/RecipeList"
 import StatusMessage from "./componentes/StatusMessage"
 
-const prueba = [
-  { id: "1", nombre: "Receta A", imagen: "https://www.themealdb.com/images/media/meals/58oia61564916529.jpg"},
-  { id: "2", nombre: "Receta B", imagen: "https://www.themealdb.com/images/media/meals/58oia61564916529.jpg"},
-  { id: "3", nombre: "Receta C", imagen: "https://www.themealdb.com/images/media/meals/58oia61564916529.jpg"},
-];
-
-
 function App() {
-  const [count, setCount] = useState(0)
+  const [recetas, setRecetas] = useState([]);
+  const [estado, setEstado] = useState("inactivo");
+  const [mensajeError, setMensajeError] = useState("");
+  const controlador = useRef(null);
+
+  useEffect(() => {
+    return () => controlador.current?.abort();
+  }, []);
+
+  async function buscar(texto){
+    const ingredientes = separarIngredientes(texto);
+
+    if(ingredientes.length === 0) return;
+
+    //Cancelamos la busqueda anterior y creamos el controlador de esta, como la anterior mision
+
+    controlador.current?.abort();
+    const miControlador = new AbortController();
+    controlador.current = miControlador;
+
+    setEstado("cargando");
+    setRecetas([]);
+
+    try{
+      const listas = await Promise.all(
+        ingredientes.map((ing) => obtenerComida(ing, miControlador.signal))
+      );
+
+      setRecetas(combinarResultados(listas));
+      setEstado("ok");
+    }catch (error){
+      if(error.name === "AbortError") return;
+
+      setMensajeError("No se pudieron cargar las recetas. Intentalo de nuevo");
+      setEstado("error");
+    }
+  }
+
+  const estadoVisible = estado === "ok" && recetas.length === 0 ? "vacio": estado;
+  
 
   return (
     <>
@@ -26,14 +59,9 @@ function App() {
       </header>
 
       <main className="main">
-        <SearchForm onBuscar={(texto) => console.log("buscar:", texto)} />
-
-        <StatusMessage estado="cargando" />
-        <StatusMessage estado="error" mensaje="No se pudieron cargar las recetas." />
-        <StatusMessage estado="vacio" />
-        <StatusMessage estado="ok" />
-
-        <RecipeList recetas={prueba} />
+        <SearchForm buscar={buscar} />
+        <StatusMessage estado={estadoVisible} mensaje={mensajeError} />
+        <RecipeList recetas={recetas} />
       </main>
     </>
   )

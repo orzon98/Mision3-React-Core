@@ -1,12 +1,11 @@
-// src/components/SearchForm.jsx
 import { useState } from "react";
 
-export default function SearchForm({ onBuscar }) {
+export default function SearchForm({ buscar }) {
   const [texto, setTexto] = useState("");
 
   function manejarSubmit(evento) {
     evento.preventDefault();
-    onBuscar(texto);
+    buscar(texto);
   }
 
   return (
