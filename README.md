@@ -12,7 +12,7 @@ Dos prompts reales que me ayudaron a entender el funcionamiento de algunas funci
 
 - *"en la anterior practica use esto [controlador?.abort()...], porque esta vez hay meter current."*
 Entonces la ia me dijo que `AbortController` no puede ser una variable normal, porque se redeclara en cada render y se perdería la busqueda anterior. Por eso se guarda con `useRef` que lo conserva entre renders sin provocar un repintado y se lee y escribe con `current`.
-- 
+- *"una de las cosas que me ha dicho la correccion es que añada un hook personalizado para quitar carga en el app.jsx, lo que he planteado es meter toda la logica en el hook pero me he perdido un poco, porque no se si tiene que pintar ya la web"* -> solo tenia que hacer un return con los valores que necesitaba App.jsx para pintar la app.
 
 ## Autopsia
 

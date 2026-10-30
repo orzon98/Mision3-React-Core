@@ -66,7 +66,7 @@ body{
   margin: 20px 0;
 }
 
-#resultados{
+.resultados{
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 20px;
@@ -74,6 +74,7 @@ body{
 }
 
 .card{
+  position: relative;
   background-color: #fffaf0;
   border-radius: 12px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
@@ -107,4 +108,23 @@ body{
 
 [hidden]{
   display: none;
+}
+
+.favorito{
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 1.4rem;
+  line-height: 1;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255, 250, 240, 0.9);
+  color: #e4572e;
+  cursor: pointer;
+}
+
+.titulo-favoritos{
+  text-align: center;
+  margin-top: 40px;
 }
